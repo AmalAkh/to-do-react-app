@@ -13,3 +13,26 @@
     border-radius: 0.75rem;
   }
 }
+.tabs 
+{
+  a
+  {
+    transition: all 0.25s;
+    &:focus, &:active
+    {
+
+
+      outline:0px;
+    }
+  }
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  
+
+}

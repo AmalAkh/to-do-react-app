@@ -1,3 +1,17 @@
 $tabs-border-bottom-width:2px;
 $tabs-link-hover-border-bottom-color:#bdbdbd;
 @import "/node_modules/bulma/bulma.sass";
+
+
+.invisible-input
+{
+    background-color: none;
+    border:none;
+    padding: 0px;
+    height: auto;
+    box-shadow:none;
+    &:active, &:focus
+    {
+        box-shadow: none;
+    }
+}
