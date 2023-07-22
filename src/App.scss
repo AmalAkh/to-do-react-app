@@ -1,0 +1,15 @@
+.tabs ul
+{
+  padding-left: 4rem;
+}
+.container.main-content-container
+{
+  width: 50% ;
+  margin: auto;
+  .content-block
+  {
+    box-shadow:0px 1px 3px 1px #dcdcdc;
+    padding: 10px;
+    border-radius: 0.75rem;
+  }
+}
