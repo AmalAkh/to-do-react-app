@@ -15,3 +15,12 @@ $tabs-link-hover-border-bottom-color:#bdbdbd;
         box-shadow: none;
     }
 }
+p
+{
+    margin: 0px;
+}
+*[contenteditable]
+{
+    appearance: none;
+    outline:none;
+}

@@ -6,13 +6,16 @@ import ReactDragListView from 'react-drag-listview/lib/index.js';
 
 import Group from './abstractions/group'
 
+import CheckBox from './components/CheckBox'
+
 function createInitialGroups()
 {
   return [new Group("Group1")]
 }
 function App() {
   const [groups, setGroups] = useState(createInitialGroups());
-  const [currentGroup, setCurrentGroup] = useState("");
+  const [currentGroup, setCurrentGroup] = useState(groups[0]);
+
 
   function updateGroupName(name, groupIndex)
   {
@@ -30,11 +33,7 @@ function App() {
   }
   function changeGroupPosition(fromIndex, toIndex)
   {
-    /*let newGroups = Object.assign({}, group);
-    let element = newGroups[fromIndex];
-    newGroups[fromIndex] = newGroups[index]
-    newGroups[toIndex] = element;
-    setGroups(newGroup)*/
+   
     const data = [...groups];
     const item = data.splice(fromIndex, 1)[0];
     data.splice(toIndex, 0, item);
@@ -58,7 +57,7 @@ function App() {
             {
               return (
               
-                <li className={currentGroup==group.id ? "is-active":""} key={index} onClick={()=>{setCurrentGroup(group.id)}}>
+                <li className={currentGroup.id==group.id ? "is-active":""} key={index} onClick={()=>{setCurrentGroup(group)}}>
                   <a className="group-editable-name" >{group.name}</a>
                 </li>
               
@@ -73,8 +72,15 @@ function App() {
          
       </div>
       <div className="container main-content-container	">
+        <h3 className='title is-3 group-title' contentEditable="true">{currentGroup.name}</h3>
         <div className='content-block'>
-          
+            <ul>
+              <li>
+                <CheckBox />
+                <p contentEditable="true" onClick={(e)=>{e.stopPropagation()}} >test</p>
+       
+              </li>
+            </ul>
         </div>
       </div>
     </>

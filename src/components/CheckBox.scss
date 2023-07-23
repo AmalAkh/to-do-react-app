@@ -1,0 +1,91 @@
+.checkbox-label
+{
+    display: flex;
+    p
+    {
+        margin-left: 10px;
+        font-weight: 500;
+    }
+    .checkbox
+    {
+        display: none;
+    }
+    .checkbox-box
+    {
+        width:1.6rem;
+        height:1.6rem;
+        
+        border-radius: 25%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(236, 236, 236);
+
+        cursor: pointer;
+        &.active
+        {
+            
+            background-color:blue;
+            transition: background-color 0.2s;
+            &
+            {
+                span
+                {
+                    opacity: 1;
+                    
+                    //transition: height 0.4s ease-in, width .3s ease-in;
+                    animation: check-anim 0.4s;
+                    height:0.60rem;
+                    width:.95rem; 
+
+                }
+            }
+        }
+        span
+        {
+            display: block;
+            color:white;
+            
+            border-color:white;
+            border-style:solid;
+            border-width: 0px;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            transform: rotateZ(-45deg);
+            height:0px;
+            width:0px;
+            opacity: 0;
+            
+            font-size: 140%;
+
+        }
+    }
+}
+@keyframes check-anim
+{
+    from
+    {
+        height: 0px;
+        width:0px;
+    }
+    25%
+    {
+        height:0.20rem;
+        width: 0px;
+    }
+    
+    50%
+    {
+        height:0.60rem;
+        width: 0px;
+    }
+    70%
+    {
+        width: 0px;
+    }
+    to
+    {
+        width:.95rem; 
+
+    }
+}
