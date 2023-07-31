@@ -7,6 +7,7 @@ import ReactDragListView from 'react-drag-listview/lib/index.js';
 import Group from './abstractions/group'
 
 import CheckBox from './components/CheckBox'
+import Task from './abstractions/task';
 
 function createInitialGroups()
 {
@@ -19,7 +20,7 @@ function App() {
 
   function updateGroupName(name, groupId)
   {
-    console.log("updated")
+    
     setGroups([...groups.map((item, index)=>
       {
         if(item.id == groupId)
@@ -45,7 +46,20 @@ function App() {
   }
   function addNewGroup()
   {
-   setGroups([...groups, new Group(`Group ${groups.length}`)])
+    setGroups([...groups, new Group(`Group ${groups.length}`)])
+  }
+  function addNewTask(name)
+  {
+    setGroups([...groups.map((item)=>
+    {
+      if(item.id == currentGroup.id)
+      {
+        return {...item, tasks:[...item.tasks, new Task(name)]}
+      }else
+      {
+        return group;
+      }
+    })])
   }
 
   return (
@@ -79,12 +93,26 @@ function App() {
         }}>{currentGroup.name}</h3>
         <div className='content-block'>
             <ul>
-              <li>
+              {groups.find((group)=>{return group.id == currentGroup.id}).tasks.map((task)=>
+              {
+                return (<>
+                <li className="task-item">
+                <CheckBox />
+                <p contentEditable="true" onClick={(e)=>{e.stopPropagation()}} >{task.name}</p>
+       
+              </li>
+                </>)
+              })}
+              <li className="task-item">
                 <CheckBox />
                 <p contentEditable="true" onClick={(e)=>{e.stopPropagation()}} >test</p>
        
               </li>
             </ul>
+            <button className="button is-ghost add-new-task" onClick={()=>
+              {
+                addNewTask("New task")
+              }}>+ Add new task</button>
         </div>
       </div>
     </>

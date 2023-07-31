@@ -1,10 +1,11 @@
 export default class Task
 {
-    constructor(text, note="", subTasks=[], date=null)
+    constructor(name, note="", subTasks=[], date=null)
     {
-        this.text = text;
+        this.name = name;
         this.note = note;
         this.subTasks = subTasks;
         this.date = date;
+        this.id = String(Math.round(Math.random()*10000));
     }
 }

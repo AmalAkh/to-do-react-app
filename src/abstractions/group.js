@@ -4,5 +4,6 @@ export default class Group
     {
         this.name = name;
         this.id = String(Math.round(Math.random()*10000));
+        this.tasks = []
     }
 }

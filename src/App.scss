@@ -40,3 +40,18 @@
 {
   outline: none;
 }
+.task-item
+{
+  display: flex;
+  margin-top: 10px;
+  p
+  {
+    flex:auto;
+    margin-left: 10px;
+  }
+}
+.button .add-new-task
+{
+  padding: 0px;
+  
+}
