@@ -17,12 +17,12 @@ function App() {
   const [currentGroup, setCurrentGroup] = useState(groups[0]);
 
 
-  function updateGroupName(name, groupIndex)
+  function updateGroupName(name, groupId)
   {
     console.log("updated")
     setGroups([...groups.map((item, index)=>
       {
-        if(index == groupIndex)
+        if(item.id == groupId)
         {
           return {...item, name:name}
         }else
@@ -72,7 +72,11 @@ function App() {
          
       </div>
       <div className="container main-content-container	">
-        <h3 className='title is-3 group-title' contentEditable="true">{currentGroup.name}</h3>
+        <h3 className='title is-3 group-title' contentEditable="true" 
+        onInput={(e)=>
+        {
+          updateGroupName(e.target.textContent, currentGroup.id)
+        }}>{currentGroup.name}</h3>
         <div className='content-block'>
             <ul>
               <li>
