@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import "./Accordion.scss";
-export default function Accordion({title,children, isOpened=false})
+export default function Accordion({title,children, isOpened=false, isIconVisible=true})
 {
     const [opened, setOpened] = useState(isOpened);
     const contentInner = useRef(null);
@@ -24,29 +24,31 @@ export default function Accordion({title,children, isOpened=false})
             content.current.style.height = `${height}px`;
         }else
         {
-            console.log("that")
+            
            
 
             content.current.style.height = `0px`;
 
         }
     },[opened])
+    function openClose()
+    {
+        let height = contentInner.current.scrollHeight;
+
+        content.current.style.height = `${height}px`;
+        setOpened(!opened)
+    }
     return (
     <div className="accordion" >
         <div class="accordion-top">
-            <div className="accordion-top-content">{title}</div>
-            <button onClick={()=>{
-                let height = contentInner.current.scrollHeight;
-
-                content.current.style.height = `${height}px`;
-                setOpened(!opened)
-            }
-                } className={`button  open-close ${opened ? "opened":""} `}>
+            <div className="accordion-top-content" onClick={openClose}>{title}</div>
+            { isIconVisible && <button onClick={openClose}
+                className={`button  open-close ${opened ? "opened":""} `}>
                
                 <ion-icon class="icon icon-medium" name="chevron-down-outline"></ion-icon>
                 
                 
-            </button>
+            </button>}
         </div>
         <div ref={content} onTransitionEnd={heightTransitionEnd} className={`accordion-content ${opened ? "opened":""}`} >
             <div ref={contentInner}>{children}</div>
