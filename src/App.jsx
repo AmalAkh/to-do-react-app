@@ -7,6 +7,8 @@ import ReactDragListView from 'react-drag-listview/lib/index.js';
 import Group from './abstractions/group'
 
 import CheckBox from './components/CheckBox'
+import Accordion from './components/Accordion'
+
 import Task from './abstractions/task';
 
 function createInitialGroups()
@@ -16,6 +18,7 @@ function createInitialGroups()
 function App() {
   const [groups, setGroups] = useState(createInitialGroups());
   const [currentGroup, setCurrentGroup] = useState(groups[0]);
+  const [isOpened, setIsOpened] = useState(true);
 
 
   function updateGroupName(name, groupId)
@@ -91,12 +94,15 @@ function App() {
         {
           updateGroupName(e.target.textContent, currentGroup.id)
         }}>{currentGroup.name}</h3>
+
         <div className='content-block'>
-            <ul>
+          
+          <Accordion isOpened={isOpened} title={<h5 className='title is-5'>Active tasks</h5>}>
+          <ul>
               {groups.find((group)=>{return group.id == currentGroup.id}).tasks.map((task)=>
               {
                 return (<>
-                <li className="task-item">
+                <li className="task-item" key={task.id}>
                 <CheckBox />
                 <p contentEditable="true" onClick={(e)=>{e.stopPropagation()}} >{task.name}</p>
        
@@ -105,7 +111,7 @@ function App() {
               })}
               <li className="task-item">
                 <CheckBox />
-                <p contentEditable="true" onClick={(e)=>{e.stopPropagation()}} >test</p>
+                <p onClick={(e)=>{e.stopPropagation()}} >test</p>
        
               </li>
             </ul>
@@ -113,6 +119,9 @@ function App() {
               {
                 addNewTask("New task")
               }}>+ Add new task</button>
+
+          </Accordion>
+            
         </div>
       </div>
     </>

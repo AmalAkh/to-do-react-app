@@ -1,0 +1,42 @@
+.accordion
+{
+    .accordion-top
+    {
+        display: flex;
+        align-items: center;
+        
+        .accordion-top-content
+        {
+            flex:auto;
+        }
+        .button.open-close
+        {
+            background-color: transparent;
+            border:0px;
+            &:hover, &:focus
+            {
+                box-shadow: none;
+            }
+            .icon
+            {
+                transition: all .25s;
+            }
+            &.opened
+            {
+                .icon
+                {
+                    
+                    transform: rotateZ(180deg);
+                }
+            }
+        }
+    }
+    .accordion-content
+    {
+        transition: all 0.5s;
+        height: 0px;
+        overflow: hidden;
+      
+        
+    }
+}
