@@ -1,8 +1,9 @@
 import { useState, useId } from "react";
 import "./CheckBox.scss";
-export default function CheckBox({text="test", onChanged= ()=>{}})
+export default function CheckBox({text="test",checked=false, onChanged= ()=>{}})
 {
-    const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState(checked);
+    
     const id = useId();
 
     return (

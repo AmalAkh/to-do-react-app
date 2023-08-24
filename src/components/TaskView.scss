@@ -1,0 +1,112 @@
+.task-view
+{
+    display: flex;
+    align-items: center;
+    .icon
+    {
+        width: 1rem !important;
+        width: 1rem !important;
+    }
+    p
+    {
+        flex:auto;
+        margin-left: 10px;
+    }
+}
+textarea.textarea
+{
+    height:1px;
+    padding-left: 0.5rem;
+    padding-right: .5rem;
+    background-color: #fafafa;
+    padding: 10px;
+}
+.date-input-block
+{
+    display: flex;
+    align-items: center;
+    padding-left: 0rem;
+    margin-top: 10px;
+ 
+    .delete
+    {
+        margin-left: 5px;
+        margin-right: 5px;
+
+    }
+    
+    .input
+    {
+        
+      
+        
+        display: none;
+
+    
+        &.visible
+        {
+            display: block;
+            width:30%
+            
+
+           
+            
+        }
+    }
+    .add-date-button, .add-time-button, .delete
+    {
+        display: none;
+        transition: all 1s;
+        &.visible
+        {
+            display: flex;
+
+        }
+        .icon
+        {
+            margin-right: 6px !important;
+        }
+    }
+
+    p
+    {
+        margin-right: 10px;
+    }
+}
+.sub-tasks-block
+{
+    padding-left: 2rem;
+    .title
+    {
+        margin-top: 10px;
+        margin-bottom: 0px !important;
+    }
+}
+.sub-tasks-list
+{
+    
+    margin-top: 0px;
+}
+.sub-task
+{
+    margin-top: 10px;
+    display: flex;
+    input
+    {
+        flex: auto;
+        margin-left: 10px;
+
+    }
+}
+@keyframes date-input-anim
+{
+    from 
+    {
+        width: 0%;
+        
+    }
+    to
+    {
+        width:40%;
+    }
+}

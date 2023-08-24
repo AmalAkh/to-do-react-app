@@ -1,23 +1,61 @@
 $tabs-border-bottom-width:2px;
 $tabs-link-hover-border-bottom-color:#bdbdbd;
+
+
+$input-background-color:#fafafa;
+$input-radius:0.75rem;
+$input-border-color:none;
+$input-hover-border-color:none;
 @import "/node_modules/bulma/bulma.sass";
+
 
 
 .invisible-input
 {
-    background-color: none;
+    background-color: transparent !important;
     border:none;
     padding: 0px;
     height: auto;
-    box-shadow:none;
-    &:active, &:focus
+    box-shadow: none;
+    appearance: none;
+    border-radius: 0px;
+    &:focus, &:active
     {
         box-shadow: none;
+    }
+
+  
+    
+}
+.input[type='date']
+{
+    background-color: #fafafa;
+    border:0px;
+}
+
+input, textarea
+{
+    appearance: none;
+    
+    &:focus, &:active
+    {
+        border:0px;
+    outline: none;
     }
 }
 p
 {
     margin: 0px;
+}
+.button.is-ghost
+{
+    box-shadow: none;
+    &:active, &:focus, &:focus:not(:active)
+    {
+        border:0px;
+        box-shadow: none;
+        outline: none;
+    }
 }
 *[contenteditable]
 {
