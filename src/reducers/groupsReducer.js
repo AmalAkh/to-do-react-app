@@ -52,9 +52,18 @@ export default function groupsReducer(groups, action)
                 return group;
             }
         })]
-    }else
+    }else if(action.type == "remove_task")
     {
-        console.log(action);
-        return groups
+        return groups.map((group)=>
+        {
+            if(group.id == action.groupId)
+            {
+                return {...group, tasks:[...group.tasks.filter((task=>
+                    {
+                        return task.id != action.taskId;
+                    }))]}
+            }
+            return group
+        })
     }
 }

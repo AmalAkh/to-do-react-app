@@ -115,6 +115,7 @@ export default function TaskView({task})
     }
     function removeTask()
     {
+        console.log(task.id);
         dispatchGroups({type:"remove_task", groupId:currentGroupId, taskId:task.id})
     
     }  
@@ -129,8 +130,9 @@ export default function TaskView({task})
                         {isTaskNameEditable && <ion-icon class="icon" name="checkmark-outline"></ion-icon>}
                         {!isTaskNameEditable && <ion-icon class="icon is-large" name="pencil-outline"></ion-icon>}
                     </button>
-                    <button className="button is-white" onClick={()=>
+                    <button className="button is-white" onClick={(e)=>
                         {
+                            e.stopPropagation();
                             removeTask()
                         }}>
 
