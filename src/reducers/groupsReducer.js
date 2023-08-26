@@ -65,5 +65,46 @@ export default function groupsReducer(groups, action)
             }
             return group
         })
+    }else if(action.type == "complete_task")
+    {
+        return groups.map((group)=>
+        {
+            if(group.id == action.groupId)
+            {
+                let completedTask = group.tasks.find((task)=>
+                {
+                    return task.id == action.taskId;
+                })
+               
+                return {...group, tasks:[...group.tasks.filter((task)=>
+                    {
+                        return task.id != action.taskId;
+                    })], completedTasks:[...group.completedTasks, {...completedTask, completed:true}]}
+            }else
+            {
+                return group;
+            }
+        })
+    }
+    else if(action.type == "cancel_completion")
+    {
+        return groups.map((group)=>
+        {
+            if(group.id == action.groupId)
+            {
+                let targetTask = group.completedTasks.find((task)=>
+                {
+                    return task.id == action.taskId;
+                })
+                
+                return {...group, completedTasks:[...group.completedTasks.filter((task)=>
+                    {
+                        return task.id != action.taskId;
+                    })], tasks:[...group.tasks, {...targetTask, completed:false}]}
+            }else
+            {
+                return group;
+            }
+        })
     }
 }

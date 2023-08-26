@@ -18,7 +18,7 @@ export default function Accordion({title,children, isOpened=false, isIconVisible
     useEffect(()=>
     {
         let height = contentInner.current.scrollHeight;
-        console.log(contentInner.current.scrollHeight)
+     
         if(opened)
         {
             content.current.style.height = `${height}px`;

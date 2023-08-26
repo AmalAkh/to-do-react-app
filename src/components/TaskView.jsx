@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useContext} from "react";
 
 import "./TaskView.scss";
-
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import Accordion from "./Accordion";
 import CheckBox from "./CheckBox";
 
@@ -10,21 +11,29 @@ import SubTask from "../abstractions/subtask";
 import { GroupDispatchContext, CurrentGroupIdContext } from "../contexts/GroupsContext";
 import groupsReducer from "../reducers/groupsReducer";
 
-export default function TaskView({task})
+export default function TaskView({inCompletedGroup= false,task})
 {
     const [currentTask, setCurrentTask] = useState({});
     const [timeVisible, setTimeVisible] = useState(false);
     const [dateVisible, setDateVisible] = useState(false);
     const [isTaskNameEditable, setIsTaskNameEditable] = useState(false)
+    const [percentageBeforeCompleting, setPercentageBeforeCompleting] = useState(0);
+    const [secondsBeforeCompleting, setSecondsBeforeCompleting] = useState(0);
+    const [timerIsVisible, setTimerIsVisible] = useState(false);
+    
 
     const taskNameInput = useRef(null);
 
     const isTaskSet = useRef(false);
 
+    const intervalId = useRef(0);
+    //const completed = useRef();
+
+
 
     const dispatchGroups = useContext(GroupDispatchContext)
     const currentGroupId = useContext(CurrentGroupIdContext)
-    console.log(task);
+
     if(!isTaskSet.current)
     {
         isTaskSet.current = true;
@@ -39,7 +48,50 @@ export default function TaskView({task})
             taskNameInput.current.focus();
         }
     }, [isTaskNameEditable])
-    
+    useEffect(()=>
+    {
+        console.log("effect");
+        if(task.completed && !inCompletedGroup)
+        {
+            let time = 0;
+            let timeToWait = 5000;
+            let leftTime = timeToWait
+            setTimerIsVisible(true);
+        
+            intervalId.current = setInterval(()=>
+            {
+                time+=100;
+                leftTime-=100
+                setPercentageBeforeCompleting((time/5000)*100)
+                setSecondsBeforeCompleting(Math.ceil(leftTime/1000))
+              
+                if(time >= timeToWait)
+                {
+                    
+                    dispatchGroups({type:"complete_task", taskId:task.id, groupId:currentGroupId})
+                    
+                    clearInterval(intervalId.current);
+                    setTimerIsVisible(false);
+
+
+                    
+                }
+            }, 100)
+            console.log(intervalId.current)
+        }else if(task.completed && inCompletedGroup)
+        {
+            
+        }else
+        {
+            debugger;
+            clearInterval(intervalId.current);
+            setTimerIsVisible(false);
+            setSecondsBeforeCompleting(0)
+            setPercentageBeforeCompleting(0)
+
+        }
+        
+    }, [task.completed])
     function taskNameInputClick(e)
     {
         if(isTaskNameEditable)
@@ -66,14 +118,14 @@ export default function TaskView({task})
     }
     function updateTaskName(e)
     {
-        console.log(currentGroupId)
+        
         dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, name:e.target.textContent}})
     }
     function updateNote(e)
     {
         e.target.style.height = `${e.target.scrollHeight}px`
         dispatchGroups({type:"update_task",groupId:currentGroupId, task:{...task, note:e.target.value}})
-        console.log(e.target.value);
+   
         
     }
     function addSubTask()
@@ -95,8 +147,7 @@ export default function TaskView({task})
     }
     function completeSubTask(e, id)
     {
-        console.log(e.target.checked)
-        
+      
         dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, subTasks:[...task.subTasks.map((subTask=>
             {
                 if(subTask.id == id)
@@ -110,12 +161,19 @@ export default function TaskView({task})
     }
     function completeTask(e)
     {
-        console.log(e.target.checked);
-        dispatchGroups({type:"update_task", task:{...task, completed:e.target.checked}, groupId:currentGroupId})
+        
+        
+        //dispatchGroups({type:"complete_task", taskId:task.id, groupId:currentGroupId})
+        dispatchGroups({type:"update_task", task:{...task, completed:!task.completed}, groupId:currentGroupId})
+        if(task.completed)
+        {
+            dispatchGroups({type:"cancel_completion", taskId:task.id, groupId:currentGroupId})
+           
+        }
     }
     function removeTask()
     {
-        console.log(task.id);
+     
         dispatchGroups({type:"remove_task", groupId:currentGroupId, taskId:task.id})
     
     }  
@@ -126,6 +184,8 @@ export default function TaskView({task})
                 <div className="task-view" onClick={openCloseTask}>
                     <CheckBox checked={task.completed} onChanged={completeTask}/>
                     <p ref={taskNameInput} contentEditable={isTaskNameEditable} onClick={taskNameInputClick} onInput={updateTaskName}>{currentTask.name}</p>
+                    {timerIsVisible && <CircularProgressbar value={percentageBeforeCompleting} text={secondsBeforeCompleting} />}
+            
                     <button className="button is-white" onClick={startEditingTaskName}>
                         {isTaskNameEditable && <ion-icon class="icon" name="checkmark-outline"></ion-icon>}
                         {!isTaskNameEditable && <ion-icon class="icon is-large" name="pencil-outline"></ion-icon>}
@@ -138,6 +198,7 @@ export default function TaskView({task})
 
                         <ion-icon name="trash-outline"></ion-icon>
                     </button>
+                    
                 </div>
                 
             } >

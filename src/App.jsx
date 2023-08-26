@@ -117,9 +117,32 @@ function App() {
 
               </GroupDispatchContext.Provider>
             </Accordion>
-          
+
+          </div>
+          <div className='content-block completed-tasks-block'>
+
+            <Accordion  title={<h5 className='title is-5'>Completed tasks</h5>}>
+              <GroupDispatchContext.Provider value={dispatchGroups}>
+                  <CurrentGroupIdContext.Provider value={currentGroup.id}>
+                    <ul>
+                        {groups.find((group)=>{return group.id == currentGroup.id}).completedTasks.map((task)=>
+                        {
+                          return (<>
+                          <li className="task-item" key={task.id}>
+                            <TaskView inCompletedGroup={true} task={task}/>
+                          </li>
+                          </>)
+                        })}
+                      
+                    </ul>
+                     
+                  </CurrentGroupIdContext.Provider>
+
+                </GroupDispatchContext.Provider>
+            </Accordion>
+          </div>
             
-        </div>
+        
       </div>
     </>
   )

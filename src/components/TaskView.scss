@@ -98,6 +98,16 @@ textarea.textarea
 
     }
 }
+.CircularProgressbar
+{
+    width: 4% !important;
+    
+}
+.CircularProgressbar .CircularProgressbar-text
+{
+    font-size: 2.5rem !important;
+    font-weight: bold;
+}
 @keyframes date-input-anim
 {
     from 
