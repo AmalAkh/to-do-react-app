@@ -148,11 +148,14 @@ export default function TaskView({task})
             },100)
         }else if(intervalId.current == -1 && task.completed)
         {
-            debugger
+      
             updateTask({...task, completed:false})
 
         }else
         {
+            setTimerIsVisible(false);
+            setPercentageBeforeCompleting(0);
+            setSecondsBeforeCompleting(5);
             clearInterval(intervalId.current);
 
         }
