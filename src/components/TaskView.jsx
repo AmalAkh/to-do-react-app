@@ -9,6 +9,8 @@ import CheckBox from "./CheckBox";
 import SubTask from "../abstractions/subtask";
 
 import { GroupDispatchContext, CurrentGroupIdContext } from "../contexts/GroupsContext";
+import { UpdateTaskContext } from "../contexts/UpdateTaskContext";
+
 import groupsReducer from "../reducers/groupsReducer";
 
 export default function TaskView({task})
@@ -32,6 +34,7 @@ export default function TaskView({task})
 
     const dispatchGroups = useContext(GroupDispatchContext)
     const currentGroupId = useContext(CurrentGroupIdContext)
+    const updateTask = useContext(UpdateTaskContext)
 
     if(!isTaskSet.current)
     {
@@ -47,11 +50,7 @@ export default function TaskView({task})
             taskNameInput.current.focus();
         }
     }, [isTaskNameEditable])
-    useEffect(()=>
-    {
-        
-        
-    }, [task.completed])
+    
     function taskNameInputClick(e)
     {
         if(isTaskNameEditable)
@@ -69,6 +68,10 @@ export default function TaskView({task})
         }
         setIsTaskNameEditable(!isTaskNameEditable);
     }
+    function stopEditingName()
+    {
+        setIsTaskNameEditable(false)
+    }
     function openCloseTask(e)
     {
         if(isTaskNameEditable)
@@ -79,22 +82,23 @@ export default function TaskView({task})
     function updateTaskName(e)
     {
         
-        dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, name:e.target.textContent}})
+        //dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, name:e.target.textContent}})
+        updateTask({...task, name:e.target.textContent})
     }
     function updateNote(e)
     {
         e.target.style.height = `${e.target.scrollHeight}px`
-        dispatchGroups({type:"update_task",groupId:currentGroupId, task:{...task, note:e.target.value}})
+        updateTask({...task, note:e.target.value})
    
         
     }
     function addSubTask()
     {
-        dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, subTasks:[...task.subTasks, new SubTask("New subtask")]}})
+        updateTask({...task, subTasks:[...task.subTasks, new SubTask("New subtask")]})
     }
     function updateSubTaskName(e, id)
     {
-        dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, subTasks:[...task.subTasks.map((subTask=>
+        updateTask({...task, subTasks:[...task.subTasks.map(subTask=>
             {
                 if(subTask.id == id)
                 {
@@ -103,12 +107,12 @@ export default function TaskView({task})
                 {
                     return {...subTask};
                 }
-            }))]}})
+            })]})
     }
     function completeSubTask(e, id)
     {
       
-        dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, subTasks:[...task.subTasks.map((subTask=>
+        updateTask({...task, subTasks:[...task.subTasks.map(subTask=>
             {
                 if(subTask.id == id)
                 {
@@ -117,7 +121,7 @@ export default function TaskView({task})
                 {
                     return {...subTask};
                 }
-            }))]}})
+            })]})
     }
 
     function completeTask(e)
@@ -136,7 +140,7 @@ export default function TaskView({task})
                 if(time >= 5000)
                 {
                     console.log("completed")
-                    dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, completed:true}})
+                    updateTask({...task, completed:true})
                     
                     clearInterval(intervalId.current);
                     intervalId.current = -1
@@ -144,7 +148,8 @@ export default function TaskView({task})
             },100)
         }else if(intervalId.current == -1 && task.completed)
         {
-            dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, completed:false}})
+            debugger
+            updateTask({...task, completed:false})
 
         }else
         {
@@ -156,7 +161,7 @@ export default function TaskView({task})
     function removeTask()
     {
      
-        dispatchGroups({type:"remove_task", groupId:currentGroupId, taskId:task.id})
+        updateTask({...task}, removeTask=true)
     
     }  
     return (<>
@@ -165,7 +170,7 @@ export default function TaskView({task})
             {
                 <div className="task-view" onClick={openCloseTask}>
                     <CheckBox checked={task.completed} onChanged={completeTask}/>
-                    <p ref={taskNameInput} contentEditable={isTaskNameEditable} onClick={taskNameInputClick} onInput={updateTaskName}>{currentTask.name}</p>
+                    <p ref={taskNameInput} contentEditable={isTaskNameEditable} onClick={taskNameInputClick} onBlur={stopEditingName} onInput={updateTaskName}>{currentTask.name}</p>
                     {timerIsVisible && <CircularProgressbar value={percentageBeforeCompleting} text={secondsBeforeCompleting} />}
             
                     <button className="button is-white" onClick={startEditingTaskName}>

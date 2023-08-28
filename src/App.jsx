@@ -19,7 +19,7 @@ import Task from './abstractions/task';
 
 
 import { GroupDispatchContext, CurrentGroupIdContext } from './contexts/GroupsContext'
-
+import { UpdateTaskContext } from './contexts/UpdateTaskContext';
 
 function createInitialGroups()
 {
@@ -94,10 +94,31 @@ function App() {
     dispatchGroups({type:"add_task",groupId:currentGroup.id, task:task})
 
   }
-  function updateTask(task)
+  function updateTask(updatedTask, removeTask=false)
   {
-    db.current.updateGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
-    dispatchGroups({type:"add_task",groupId:currentGroup.id, task:task})
+    if(!removeTask)
+    {
+      db.current.updateGroup({...currentGroup, tasks:currentGroup.tasks.map((task)=>
+        {
+          if(task.id == updatedTask.id)
+          {
+            return {...updatedTask}
+          }else
+          {
+            return task
+          }
+        })})
+      dispatchGroups({type:"update_task",groupId:currentGroup.id, task:updatedTask})
+    }else
+    {
+      db.current.updateGroup({...currentGroup, tasks:currentGroup.tasks.filter((task)=>
+        {
+         return task.id != updatedTask.id
+        })})
+      dispatchGroups({type:"remove_task",groupId:currentGroup.id, taskId:updatedTask.id})
+   
+      
+    }
 
   }
 
@@ -136,21 +157,23 @@ function App() {
           <Accordion isOpened={isOpened} title={<h5 className='title is-5'>Active tasks</h5>}>
             <GroupDispatchContext.Provider value={dispatchGroups}>
                 <CurrentGroupIdContext.Provider value={currentGroup.id}>
-                  <ul>
-                      {groups.find((group)=>{return group.id == currentGroup.id}).tasks.filter((task)=>!task.completed).map((task)=>
-                      {
-                        return (<>
-                        <li className="task-item" key={task.id}>
-                          <TaskView task={task}/>
-                        </li>
-                        </>)
-                      })}
-                    
-                  </ul>
-                    <button className="button is-ghost add-new-task" onClick={()=>
-                      {
-                        addNewTask("New task")
-                      }}>+ Add new task</button>
+                  <UpdateTaskContext.Provider value={updateTask}>
+                    <ul>
+                        {groups.find((group)=>{return group.id == currentGroup.id}).tasks.filter((task)=>!task.completed).map((task)=>
+                        {
+                          return (<>
+                          <li className="task-item" key={task.id}>
+                            <TaskView task={task}/>
+                          </li>
+                          </>)
+                        })}
+                      
+                    </ul>
+                      <button className="button is-ghost add-new-task" onClick={()=>
+                        {
+                          addNewTask("New task")
+                        }}>+ Add new task</button>
+                  </UpdateTaskContext.Provider>
                 </CurrentGroupIdContext.Provider>
 
               </GroupDispatchContext.Provider>
@@ -161,6 +184,8 @@ function App() {
 
             <Accordion  title={<h5 className='title is-5'>Completed tasks</h5>}>
               <GroupDispatchContext.Provider value={dispatchGroups}>
+              <UpdateTaskContext.Provider value={updateTask}>
+                  
                   <CurrentGroupIdContext.Provider value={currentGroup.id}>
                     <ul>
                         {groups.find((group)=>{return group.id == currentGroup.id}).tasks.filter((task)=>task.completed).map((task)=>
@@ -175,7 +200,7 @@ function App() {
                     </ul>
                      
                   </CurrentGroupIdContext.Provider>
-
+                </UpdateTaskContext.Provider>
                 </GroupDispatchContext.Provider>
             </Accordion>
           </div>
