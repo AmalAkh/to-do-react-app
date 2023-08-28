@@ -88,8 +88,7 @@ function App() {
   async function addNewTask(name)
   {
     let task = new Task(name)
-    console.log(currentGroup)
-    console.log(groups[0])
+
     setCurrentGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
     db.current.updateGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
     dispatchGroups({type:"add_task",groupId:currentGroup.id, task:task})
@@ -138,7 +137,7 @@ function App() {
             <GroupDispatchContext.Provider value={dispatchGroups}>
                 <CurrentGroupIdContext.Provider value={currentGroup.id}>
                   <ul>
-                      {groups.find((group)=>{return group.id == currentGroup.id}).tasks.map((task)=>
+                      {groups.find((group)=>{return group.id == currentGroup.id}).tasks.filter((task)=>!task.completed).map((task)=>
                       {
                         return (<>
                         <li className="task-item" key={task.id}>
@@ -164,7 +163,7 @@ function App() {
               <GroupDispatchContext.Provider value={dispatchGroups}>
                   <CurrentGroupIdContext.Provider value={currentGroup.id}>
                     <ul>
-                        {groups.find((group)=>{return group.id == currentGroup.id}).completedTasks.map((task)=>
+                        {groups.find((group)=>{return group.id == currentGroup.id}).tasks.filter((task)=>task.completed).map((task)=>
                         {
                           return (<>
                           <li className="task-item" key={task.id}>

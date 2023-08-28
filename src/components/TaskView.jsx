@@ -11,11 +11,10 @@ import SubTask from "../abstractions/subtask";
 import { GroupDispatchContext, CurrentGroupIdContext } from "../contexts/GroupsContext";
 import groupsReducer from "../reducers/groupsReducer";
 
-export default function TaskView({inCompletedGroup= false,task})
+export default function TaskView({task})
 {
     const [currentTask, setCurrentTask] = useState({});
-    const [timeVisible, setTimeVisible] = useState(false);
-    const [dateVisible, setDateVisible] = useState(false);
+   
     const [isTaskNameEditable, setIsTaskNameEditable] = useState(false)
     const [percentageBeforeCompleting, setPercentageBeforeCompleting] = useState(0);
     const [secondsBeforeCompleting, setSecondsBeforeCompleting] = useState(0);
@@ -26,7 +25,7 @@ export default function TaskView({inCompletedGroup= false,task})
 
     const isTaskSet = useRef(false);
 
-    const intervalId = useRef(0);
+    const intervalId = useRef(-1);
     //const completed = useRef();
 
 
@@ -50,46 +49,7 @@ export default function TaskView({inCompletedGroup= false,task})
     }, [isTaskNameEditable])
     useEffect(()=>
     {
-        console.log("effect");
-        if(task.completed && !inCompletedGroup)
-        {
-            let time = 0;
-            let timeToWait = 5000;
-            let leftTime = timeToWait
-            setTimerIsVisible(true);
         
-            intervalId.current = setInterval(()=>
-            {
-                time+=100;
-                leftTime-=100
-                setPercentageBeforeCompleting((time/5000)*100)
-                setSecondsBeforeCompleting(Math.ceil(leftTime/1000))
-              
-                if(time >= timeToWait)
-                {
-                    
-                    dispatchGroups({type:"complete_task", taskId:task.id, groupId:currentGroupId})
-                    
-                    clearInterval(intervalId.current);
-                    setTimerIsVisible(false);
-
-
-                    
-                }
-            }, 100)
-            console.log(intervalId.current)
-        }else if(task.completed && inCompletedGroup)
-        {
-            
-        }else
-        {
-            debugger;
-            clearInterval(intervalId.current);
-            setTimerIsVisible(false);
-            setSecondsBeforeCompleting(0)
-            setPercentageBeforeCompleting(0)
-
-        }
         
     }, [task.completed])
     function taskNameInputClick(e)
@@ -159,17 +119,39 @@ export default function TaskView({inCompletedGroup= false,task})
                 }
             }))]}})
     }
+
     function completeTask(e)
     {
-        
-        
-        //dispatchGroups({type:"complete_task", taskId:task.id, groupId:currentGroupId})
-        dispatchGroups({type:"update_task", task:{...task, completed:!task.completed}, groupId:currentGroupId})
-        if(task.completed)
+        if(intervalId.current == -1 && !task.completed)
         {
-            dispatchGroups({type:"cancel_completion", taskId:task.id, groupId:currentGroupId})
-           
+            let time = 0;
+            setTimerIsVisible(true);
+            
+            intervalId.current = setInterval(()=>
+            {
+                time+=100;
+                console.log("timing")
+                setPercentageBeforeCompleting((time/5000)*100);
+                setSecondsBeforeCompleting(Math.ceil((5000 - time)/1000))
+                if(time >= 5000)
+                {
+                    console.log("completed")
+                    dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, completed:true}})
+                    
+                    clearInterval(intervalId.current);
+                    intervalId.current = -1
+                }
+            },100)
+        }else if(intervalId.current == -1 && task.completed)
+        {
+            dispatchGroups({type:"update_task", groupId:currentGroupId, task:{...task, completed:false}})
+
+        }else
+        {
+            clearInterval(intervalId.current);
+
         }
+        
     }
     function removeTask()
     {
