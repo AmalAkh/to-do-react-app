@@ -146,7 +146,7 @@ function App() {
          
       </div>
       <div className="container main-content-container	">
-        { currentGroup != null && <> <input className='input invisible-input group-name-input' defaultValue={currentGroup.name} contentEditable="true" 
+        { currentGroup != null && <> <input key={currentGroup.id} className='input invisible-input group-name-input' defaultValue={currentGroup.name} contentEditable="true" 
         onInput={(e)=>
         {
           updateGroupName(e.target.value, currentGroup.id)
