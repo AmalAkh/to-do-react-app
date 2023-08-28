@@ -1,10 +1,16 @@
 import Task from "../abstractions/task";
 
+
+
 export default function groupsReducer(groups, action)
 {
     if(action.type == "add")
     {
+    
         return [...groups, action.group]
+    }else if(action.type == "set_groups")
+    {
+        return [...action.groups]
     }else if(action.type == "update_name")
     {
         return [...groups.map((item)=>

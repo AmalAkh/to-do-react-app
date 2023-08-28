@@ -1,4 +1,4 @@
-import { useState, useReducer } from 'react'
+import { useState, useReducer, useEffect, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.scss'
@@ -8,6 +8,8 @@ import Group from './abstractions/group'
 
 import groupsReducer from './reducers/groupsReducer';
 
+import IndexDBWrapper from './utils/IndexDBWrapper';
+
 import CheckBox from './components/CheckBox'
 import Accordion from './components/Accordion'
 import TaskView from './components/TaskView'
@@ -15,26 +17,53 @@ import TaskView from './components/TaskView'
 
 import Task from './abstractions/task';
 
+
 import { GroupDispatchContext, CurrentGroupIdContext } from './contexts/GroupsContext'
 
 
 function createInitialGroups()
 {
-  return [new Group("Group1")]
+  return []
 }
 function App() {
   let initialGroups = createInitialGroups();
   const [groups, dispatchGroups] = useReducer(groupsReducer, initialGroups);
   
-  const [currentGroup, setCurrentGroup] = useState(initialGroups[0]);
-  const [isOpened, setIsOpened] = useState(true);
-
-  
-
-
-  function updateGroupName(name, groupId)
+  const [currentGroup, setCurrentGroup] = useState(()=>
   {
-    
+    if(groups.length > 0)
+    {
+      return groups[0];
+    }else
+    {
+      return null
+    }
+  });
+  const [isOpened, setIsOpened] = useState(true);
+  const db = useRef(null);
+  
+  useEffect(()=>
+  {
+      db.current = new IndexDBWrapper();
+      
+      (async()=>
+      {
+        let t  = await db.current.init();
+        db.current._db = t;
+        let groups = await db.current.getGroups();
+        console.log(groups)
+        setCurrentGroup(groups[0])
+        dispatchGroups({type:"set_groups", groups:groups})
+        
+        
+      })()
+      
+  },[])
+  
+  async function updateGroupName(name, groupId)
+  {
+    setCurrentGroup({...currentGroup, name:name})
+    db.current.updateGroup({...currentGroup, name:name})
     dispatchGroups({name:name, id:groupId, type:"update_name"})
   }
   function changeGroupPosition(fromIndex, toIndex)
@@ -51,14 +80,24 @@ function App() {
   }
   function addNewGroup()
   {
-    dispatchGroups({group:new Group("Group 1"), type:"add"})
+    let newGroup = new Group("Group 1")
+    dispatchGroups({group:newGroup, type:"add"})
+    setCurrentGroup(newGroup)
+    db.current.addGroup(newGroup)
   }
-  function addNewTask(name)
+  async function addNewTask(name)
   {
     let task = new Task(name)
     console.log(currentGroup)
     console.log(groups[0])
+    setCurrentGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
+    db.current.updateGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
+    dispatchGroups({type:"add_task",groupId:currentGroup.id, task:task})
 
+  }
+  function updateTask(task)
+  {
+    db.current.updateGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
     dispatchGroups({type:"add_task",groupId:currentGroup.id, task:task})
 
   }
@@ -87,11 +126,11 @@ function App() {
          
       </div>
       <div className="container main-content-container	">
-        <h3 className='title is-3 group-title' contentEditable="true" 
+        { currentGroup != null && <> <input className='input invisible-input group-name-input' defaultValue={currentGroup.name} contentEditable="true" 
         onInput={(e)=>
         {
-          updateGroupName(e.target.textContent, currentGroup.id)
-        }}>{currentGroup.name}</h3>
+          updateGroupName(e.target.value, currentGroup.id)
+        }}/>
 
         <div className='content-block'>
           
@@ -141,7 +180,7 @@ function App() {
                 </GroupDispatchContext.Provider>
             </Accordion>
           </div>
-            
+          </> }
         
       </div>
     </>
