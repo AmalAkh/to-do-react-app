@@ -130,7 +130,7 @@ export default function TaskView({task})
         {
             let time = 0;
             setTimerIsVisible(true);
-            
+            console.log("start timer")
             intervalId.current = setInterval(()=>
             {
                 time+=100;
@@ -148,15 +148,19 @@ export default function TaskView({task})
             },100)
         }else if(intervalId.current == -1 && task.completed)
         {
+            console.log("just change status")
       
             updateTask({...task, completed:false})
 
         }else
         {
+            console.log("stop timer")
+
             setTimerIsVisible(false);
             setPercentageBeforeCompleting(0);
             setSecondsBeforeCompleting(5);
             clearInterval(intervalId.current);
+            intervalId.current = -1;
 
         }
         
