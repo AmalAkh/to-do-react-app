@@ -74,9 +74,20 @@ function App() {
     data.splice(toIndex, 0, item);
     setGroups(data)
   }
-  function removeGroup(id)
+  function removeGroup()
   {
-
+   
+    let currentGroupId = currentGroup.id
+    let index = groups.findIndex((group)=>group.id == currentGroup.id)
+    if(index == 0)
+    {
+      setCurrentGroup(groups[1])
+    }else
+    {
+      setCurrentGroup(groups[index-1])
+    }
+    dispatchGroups({type:"remove", groupId:currentGroupId})
+    db.current.removeGroup(currentGroupId)
   }
   function addNewGroup()
   {
@@ -146,11 +157,18 @@ function App() {
          
       </div>
       <div className="container main-content-container	">
-        { currentGroup != null && <> <input key={currentGroup.id} className='input invisible-input group-name-input' defaultValue={currentGroup.name} contentEditable="true" 
-        onInput={(e)=>
-        {
-          updateGroupName(e.target.value, currentGroup.id)
-        }}/>
+        { currentGroup != null && <>
+        <div className='group-header'>
+          <input key={currentGroup.id} className='input invisible-input group-name-input' defaultValue={currentGroup.name} contentEditable="true" 
+          onInput={(e)=>
+          {
+            updateGroupName(e.target.value, currentGroup.id)
+          }}/>
+          <button className="button is-danger" onClick={removeGroup}>
+            <ion-icon name="trash-outline"></ion-icon>
+
+          </button>
+        </div>
 
         <div className='content-block'>
           

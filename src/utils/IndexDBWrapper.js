@@ -83,8 +83,15 @@ export default class IndexDBWrapper
             req.onerror = (e)=>{reject(e.target.error)}
         })
     }
-    removeGroup()
+    removeGroup(groupId)
     {
-
+        return new Promise((resolve, reject)=>
+        {
+            let transaction = this._db.transaction("groups", "readwrite")
+            let store = transaction.objectStore("groups")
+            let req = store.delete(groupId)
+            req.onsuccess = ()=>{resolve(groupId)};
+            req.onerror = (e)=>{reject(e.target.error)}
+        })
     }
 }

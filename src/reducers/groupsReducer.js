@@ -8,11 +8,20 @@ export default function groupsReducer(groups, action)
     {
     
         return [...groups, action.group]
-    }else if(action.type == "set_groups")
+    }else if(action.type == "remove")
     {
+        let gs = groups.filter((group)=>group.id != action.groupId)
+        
+        return [...gs]
+    }
+    else if(action.type == "set_groups")
+    {
+        
+
         return [...action.groups]
     }else if(action.type == "update_name")
     {
+        debugger
         return [...groups.map((item)=>
             {
                 if(item.id == action.id)

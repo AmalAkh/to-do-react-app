@@ -36,10 +36,16 @@
   
 
 }
+.group-header
+{
+  display: flex;
+  align-items: center;
+}
 .group-name-input
 {
   font-size: 2rem !important;
   margin-bottom: 10px;
+  flex:auto;
 }
 .group-title
 {
