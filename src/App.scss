@@ -82,7 +82,11 @@
 {
   .container.main-content-container
   {
-    width: 75%;
+    width: 95%;
+  }
+  .tabs ul
+  {
+    padding-left: 0rem;
   }
 }
 @media screen and (max-width:425px)
@@ -91,8 +95,5 @@
   {
     width: 96%;
   }
-  .tabs ul
-  {
-    padding-left: 0rem;
-  }
+  
 }
