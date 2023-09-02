@@ -36,11 +36,14 @@ function App() {
       return groups[0];
     }else
     {
-      return null
+      return {id:null, tasks:[]}
     }
   });
   const [isOpened, setIsOpened] = useState(true);
   const db = useRef(null);
+  const tabs = useRef(null);
+  const activeTasks  = useRef(null);
+
   
   useEffect(()=>
   {
@@ -59,6 +62,29 @@ function App() {
       })()
       
   },[])
+  useEffect(()=>
+  {
+    
+    if(tabs.current.children.length>1)
+    {
+      let index = groups.findIndex((group)=>
+      {
+        return group.id == currentGroup.id
+      })
+      
+      tabs.current.children[index].scrollIntoView({behavior:'smooth', inline:'start'});
+    }
+  }, [currentGroup.id])
+  useEffect(()=>
+  {
+    
+    if(activeTasks.current != null && activeTasks.current.children.length>1)
+    {
+      
+      
+      activeTasks.current.children[activeTasks.current.children.length-1].scrollIntoView({behavior:'smooth', inline:'start'});
+    }
+  }, [currentGroup.tasks])
   
   async function updateGroupName(name, groupId)
   {
@@ -66,14 +92,7 @@ function App() {
     db.current.updateGroup({...currentGroup, name:name})
     dispatchGroups({name:name, id:groupId, type:"update_name"})
   }
-  function changeGroupPosition(fromIndex, toIndex)
-  {
-   
-    const data = [...groups];
-    const item = data.splice(fromIndex, 1)[0];
-    data.splice(toIndex, 0, item);
-    setGroups(data)
-  }
+  
   function removeGroup()
   {
    
@@ -87,7 +106,7 @@ function App() {
       setCurrentGroup(groups[index-1])
     }
     dispatchGroups({type:"remove", groupId:currentGroupId})
-    db.current.removeGroup(currentGroupId)
+    db.current.removeGroup(currentGroupId )
   }
   function addNewGroup()
   {
@@ -95,16 +114,18 @@ function App() {
     dispatchGroups({group:newGroup, type:"add"})
     setCurrentGroup(newGroup)
     db.current.addGroup(newGroup)
+   
   }
   async function addNewTask(name)
   {
     let task = new Task(name)
-
+    setCurrentGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
     setCurrentGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
     db.current.updateGroup({...currentGroup, tasks:[...currentGroup.tasks, task]})
     dispatchGroups({type:"add_task",groupId:currentGroup.id, task:task})
 
   }
+  
   function updateTask(updatedTask, removeTask=false)
   {
     if(!removeTask)
@@ -135,9 +156,9 @@ function App() {
 
   return (
     <>
-      <div className="tabs">
+      <div className="tabs" >
           
-          <ul>
+          <ul ref={tabs}>
             {groups.map((group, index)=>
             {
               return (
@@ -157,7 +178,7 @@ function App() {
          
       </div>
       <div className="container main-content-container	">
-        { currentGroup != null && <>
+        { currentGroup.id != null && <>
         <div className='group-header'>
           <input key={currentGroup.id} className='input invisible-input group-name-input' defaultValue={currentGroup.name} contentEditable="true" 
           onInput={(e)=>
@@ -176,7 +197,7 @@ function App() {
             <GroupDispatchContext.Provider value={dispatchGroups}>
                 <CurrentGroupIdContext.Provider value={currentGroup.id}>
                   <UpdateTaskContext.Provider value={updateTask}>
-                    <ul>
+                    <ul ref={activeTasks}>
                         {groups.find((group)=>{return group.id == currentGroup.id}).tasks.filter((task)=>!task.completed).map((task)=>
                         {
                           return (<>
